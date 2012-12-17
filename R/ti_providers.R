@@ -1,19 +1,23 @@
 
 #' Returns a list of current ImpactStory data providers
 #'
+#' @param key An ImpactStory API key
 #' @param as.df = \code{FALSE}. Returns a \code{data.frame} instead of a list.
 #' @export
 #' @return \code{list}
 #' @examples \dontrun{
 #' IS_providers()
 #' IS_providers(as.df = TRUE)
-#' write.csv(t1_providers(as.df = TRUE), file = "total-impact-metadata.csv")
+#' write.csv(t1_providers(as.df = TRUE), file = "ImpactStory_metadata.csv")
 #'  # will write the data to a flat csv file.
-#'  # Note: The coercion will not be enISrely clean due to the variable number of fields under descripISon for each metric provider.
+#'  # Note: The coercion will not be entirely clean due to the variable number of fields under description for each metric provider.
 #'}
 #' @author Karthik Ram \email{karthik.ram@@gmail.com}
-IS_providers <- function(as.df = FALSE) {
- providers <-  getURL('http://api.impactstory.org/provider')
+IS_providers <- function(key = getOption("ImpactStoryKey", stop("Missing Dropbox consumer key")), as.df = FALSE) {
+
+ base_url <- "http://api.impactstory.org/v1"
+ provider_url <- paste(base_url, "/provider", "?key=", key, sep="")
+ providers <-  getURL(provider_url)
  provider_list <- (as.list(fromJSON(I(providers))))
  message("Impact Story currently provides metrics on the following data providers: ")
  message(sprintf("%s ", names(provider_list)))
@@ -28,6 +32,6 @@ IS_providers <- function(as.df = FALSE) {
    names(provider_df) <- c("Provider", "Var1", "Values1", "Var2", "Values2")
    return(provider_df)
 		}
-} 
+}
 
 
